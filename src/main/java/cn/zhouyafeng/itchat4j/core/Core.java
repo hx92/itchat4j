@@ -23,6 +23,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 public class Core {
 
 	private static Core instance;
+	private Process exec;
 
 	private Core() {
 
@@ -55,6 +56,7 @@ public class Core {
 	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();;// 特殊账号
 	private List<String> groupIdList = new ArrayList<String>(); // 群ID列表
 	private List<String> groupNickNameList = new ArrayList<String>(); // 群NickName列表
+	private Map<String,JSONObject> groupPropertyMap = new HashMap<>(); // 群聊字典
 
 	private Map<String, JSONObject> userInfoMap = new HashMap<String, JSONObject>();
 
@@ -273,4 +275,19 @@ public class Core {
 		this.indexUrl = indexUrl;
 	}
 
+	public void setQrCodeProcess(Process exec) {
+		this.exec = exec;
+	}
+
+	public Process  getQrCodeProcess() {
+		return exec;
+	}
+
+	public Map<String, JSONObject> getGroupPropertyMap() {
+		return groupPropertyMap;
+	}
+
+	public void setGroupPropertyMap(Map<String, JSONObject> groupPropertyMap) {
+		this.groupPropertyMap = groupPropertyMap;
+	}
 }

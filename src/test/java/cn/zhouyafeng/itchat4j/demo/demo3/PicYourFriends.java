@@ -41,9 +41,13 @@ public class PicYourFriends implements IMsgHandlerFace {
 			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
 			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
-			if (text.equals("111")) {
+			if (text.equals("dpic")) {
 				LOG.info("开始下载好友头像");
 				List<JSONObject> friends = WechatTools.getContactList();
+				File file = new File(path);
+				if (!file.exists()) {
+					file.mkdirs();
+				}
 				for (int i = 0; i < friends.size(); i++) {
 					JSONObject friend = friends.get(i);
 					String url = baseUrl + friend.getString("HeadImgUrl") + skey;

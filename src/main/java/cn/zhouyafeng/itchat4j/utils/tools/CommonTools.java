@@ -1,31 +1,37 @@
 package cn.zhouyafeng.itchat4j.utils.tools;
 
+import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.utils.Config;
+import cn.zhouyafeng.itchat4j.utils.enums.OsNameEnum;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.vdurmont.emoji.EmojiParser;
+import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.vdurmont.emoji.EmojiParser;
-
-import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.enums.OsNameEnum;
-
 /**
  * 常用工具类
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月8日 下午10:59:55
  * @version 1.0
@@ -40,7 +46,13 @@ public class CommonTools {
 			if (Config.getOsNameEnum().equals(OsNameEnum.WINDOWS)) {
 				Runtime runtime = Runtime.getRuntime();
 				try {
-					runtime.exec("cmd /c start " + qrPath);
+					try {
+						// 为了实现自动关闭
+						Process exec = runtime.exec("rundll32.exe C:\\Windows\\System32\\shimgvw.dll,ImageView_Fullscreen " + new File(qrPath).getPath());
+						Core.getInstance().setQrCodeProcess(exec);
+					}catch (Exception e){
+					  runtime.exec("cmd /c start " + qrPath);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -84,7 +96,7 @@ public class CommonTools {
 
 	/**
 	 * 正则表达式处理工具
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 上午12:27:10
 	 * @return
@@ -97,7 +109,7 @@ public class CommonTools {
 
 	/**
 	 * xml解析器
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午6:24:25
 	 * @param text
@@ -189,7 +201,7 @@ public class CommonTools {
 
 	/**
 	 * 处理emoji表情
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午2:39:04
 	 * @param d
@@ -226,7 +238,7 @@ public class CommonTools {
 
 	/**
 	 * 消息格式化
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午4:19:08
 	 * @param d
@@ -239,5 +251,18 @@ public class CommonTools {
 		// StringEscapeUtils.unescapeHtml4(d.getString(k)));
 
 	}
-
+	public static void writeFile(String fileName, Object groupNickNameList) {
+		try {
+			String format = LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME).replace(":","");
+			String s = format + "_" + RandomStringUtils.randomAlphabetic(3)+".txt";
+			Path dir = Paths.get("D:\\mywechatinfo\\" + fileName + s);
+			if (!dir.getParent().toFile().exists()) {
+				Files.createDirectory(dir.getParent());
+			}
+			Path write = Files.write(dir, Collections.singleton(JSON.toJSONString(groupNickNameList,true)));
+			System.out.println(write);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

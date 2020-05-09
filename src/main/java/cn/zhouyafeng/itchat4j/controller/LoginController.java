@@ -56,6 +56,13 @@ public class LoginController {
 			}
 			LOG.info("4. 登陆超时，请重新扫描二维码图片");
 		}
+		Process qrCodeProcess = Core.getInstance().getQrCodeProcess();
+		if (qrCodeProcess != null) {
+			Core.getInstance().setQrCodeProcess(null);
+			if (qrCodeProcess.isAlive()) {
+				qrCodeProcess.destroy();
+			}
+		}
 
 		LOG.info("5. 登陆成功，微信初始化");
 		if (!loginService.webWxInit()) {
